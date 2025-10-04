@@ -26,7 +26,25 @@
 ['link'=>'Контакты', 'href'=>'contact.php'],
 ['link'=>'Таблица умножения', 'href'=>'table.php'],
 ['link'=>'Калькулятор', 'href'=>'calc.php']
-]; 
+	];
+
+	function drawMenu($menu, $vertical = true) {
+    if ($vertical) {
+        echo "<ul>";
+        foreach ($menu as $item) {
+            echo "<li><a href='{$item['href']}'>{$item['link']}</a></li>";
+        }
+        echo "</ul>";
+    } else {
+        echo "<ul style='list-style: none; padding: 0; margin: 0;'>";
+        foreach ($menu as $item) {
+            echo "<li style='display: inline; margin-right: 15px;'>
+                    <a href='{$item['href']}'>{$item['link']}</a>
+                  </li>";
+        }
+        echo "</ul>";
+    }
+}
     ?>
 <head>
   <title>Сайт нашей школы</title>
@@ -68,11 +86,7 @@
     <!-- Навигация -->
     <h2>Навигация по сайту</h2>
     <!-- Меню -->
-    <ul>
-         <?php foreach($leftMenu as $item): ?>
-              <li><a href="<?= $item['href']?>"><?= $item['link']?></a></li>
-         <?php endforeach; ?>
-    </ul>
+    <?= drawMenu($leftMenu); ?>
     <!-- Меню -->
     <!-- Навигация -->
   </div>
