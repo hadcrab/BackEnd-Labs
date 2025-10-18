@@ -1,4 +1,4 @@
-version: "0"
+version: "3.9"
 services:
   nginx:
     image: nginx:latest
@@ -11,9 +11,35 @@ services:
     command: [nginx-debug, '-g', 'daemon off;']
     depends_on:
       - php
+    networks:
+      - schoolb2net
 
   php:
     image: php:8.2-fpm
     container_name: php
-    volumes: 
-     - ./src:/app 
+    volumes:
+      - ./src:/app
+    working_dir: /app
+    depends_on:
+      - db
+    networks:
+      - schoolb2net
+
+  db:
+    image: mariadb:latest
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: gbook
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./src/schoolb2/gbook/gbook.sql:/docker-entrypoint-initdb.d/gbook.sql
+    networks:
+      - schoolb2net
+
+networks:
+  schoolb2net:
+
+volumes:
+  db_data:
+

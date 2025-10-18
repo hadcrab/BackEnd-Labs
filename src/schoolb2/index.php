@@ -1,4 +1,5 @@
-<?php 
+<?php
+ob_start();
 include 'inc/headers.inc.php';
 include 'inc/cookie.inc.php';
 define('PATH_LOG', 'path.log'); 
@@ -68,3 +69,5 @@ include 'inc/log.inc.php';
 </body>
 
 </html>
+
+<? ob_end_flush(); ?>
