@@ -58,28 +58,43 @@ class NewsDB implements INewsDB {
         $stmt->bindValue(':dt', $dt, SQLITE3_INTEGER);
         return $stmt->execute() ? true : false;
     }
-    public function getNews(int $limit = 10, int $offset = 0) : array {
-        $sql = "SELECT * FROM msgs ORDER BY datetime DESC LIMIT :limit OFFSET :offset";
-        $stmt = $this->_db->prepare($sql);
-        $stmt->bindValue(':limit', $limit, SQLITE3_INTEGER);
-        $stmt->bindValue(':offset', $offset, SQLITE3_INTEGER);
-        $res = $stmt->execute();
-        $rows = [];
-        while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
-           $rows[] = $row;
+    public function getNews() {
+        $sql = "SELECT 
+                msgs.id AS id, 
+                title, 
+                category.name AS category, 
+                description, 
+                source, 
+                datetime 
+            FROM msgs, category 
+            WHERE category.id = msgs.category 
+            ORDER BY msgs.id DESC";
+
+        $result = $this->_db->query($sql);
+        if (!$result) return false;
+        $data = [];
+        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+            $data[] = $row;
         }
-        return $rows;
+        return $data;
     }
-    public function showNews($id){
-        $news = $this->getNews($limit);
-        foreach ($news as $item) {
-            echo "<article>";
-            echo "<h2>" . htmlspecialchars($item['title']) . "</h2>";
-            echo "<p>" . nl2br(htmlspecialchars($item['description'])) . "</p>";
-            echo "<small>" . date('Y-m-d H:i:s', (int)$item['datetime']) . "</small>";
-            echo "</article>";
+
+    public function showNews($id) {
+        $id = (int)$id;
+        $sql = "SELECT 
+                msgs.id AS id, 
+                title, 
+                category.name AS category, 
+                description, 
+                source, 
+                datetime 
+            FROM msgs, category 
+            WHERE category.id = msgs.category AND msgs.id = $id";
+
+        $result = $this->_db->querySingle($sql, true);
+        return $result ?: false;
     }
-}
+
 
 }
 $news = new NewsDB();
